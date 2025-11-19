@@ -32,7 +32,7 @@ static uint8_t DEVICE_ID_TPS546D24S[] = {0x54, 0x49, 0x54, 0x6D, 0x24, 0x62};
 // static uint8_t DEVICE_ID_TPS546B24S[] = {0x54, 0x49, 0x54, 0x6B, 0x24, 0x62};
 
 static i2c_master_dev_handle_t tps546_i2c_handle[3];
-static uint16_t TPS546_I2C_ADDR[3] = {0x24, 0x7F, 0x14};
+static uint16_t TPS546_I2C_ADDR[3] = {0x7F, 0x24, 0x14}; //U1, U2, U3
 
 static TPS546_CONFIG tps546_config;
 
