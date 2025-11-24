@@ -138,7 +138,7 @@ esp_err_t display_init(void * pvParameters)
         esp_lcd_panel_dev_config_t panel_config = {
             .bits_per_pixel = 16, // RGB565
             .color_space = ESP_LCD_COLOR_SPACE_RGB,
-            .reset_gpio_num = CONFIG_GPIO_LCD_RESET_PIN,
+            .reset_gpio_num = -1, //CONFIG_GPIO_LCD_RESET_PIN,
         };
 
         // Initialize panel
@@ -242,7 +242,7 @@ esp_err_t display_init(void * pvParameters)
         disp_cfg.color_format = LV_COLOR_FORMAT_RGB565;
         disp_cfg.buffer_size = GLOBAL_STATE->DISPLAY_CONFIG.h_res * GLOBAL_STATE->DISPLAY_CONFIG.v_res * 2;
         disp_cfg.flags.buff_dma = true;
-        disp_cfg.flags.buff_spiram = true;
+        //disp_cfg.flags.buff_spiram = true;
         break;
     default:
         break;
@@ -275,20 +275,14 @@ esp_err_t display_init(void * pvParameters)
                     break;
             }
 
-            switch (GLOBAL_STATE->DISPLAY_CONFIG.display) {
-            case ST7789:
-                break;
-            default:
-                lv_style_init(&scr_style);
-                lv_style_set_text_font(&scr_style, &lv_font_portfolio_6x8);
-                lv_style_set_bg_opa(&scr_style, LV_OPA_COVER);
+            lv_style_init(&scr_style);
+            lv_style_set_text_font(&scr_style, &lv_font_portfolio_6x8);
+            lv_style_set_bg_opa(&scr_style, LV_OPA_COVER);
 
-                lv_theme_set_apply_cb(&theme, theme_apply);
+            lv_theme_set_apply_cb(&theme, theme_apply);
 
-                lv_display_set_theme(disp, &theme);
-                lvgl_port_unlock();
-                break;
-            }
+            lv_display_set_theme(disp, &theme);
+            lvgl_port_unlock();
         }
 
         // Only turn on the screen when it has been cleared

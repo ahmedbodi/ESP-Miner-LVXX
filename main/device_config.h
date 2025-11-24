@@ -159,7 +159,15 @@ static const DeviceConfig default_configs[] = {
     { .board_version = "301_", .family = FAMILY_LV06,        .EMC2302 = true, .TMP1075 = true,                                            .temp_offset = 5,   .TPS546 = true,                                                           .power_consumption_target = 40, },
     { .board_version = "301",  .family = FAMILY_LV07,        .EMC2302 = true, .TMP1075 = true,                                            .temp_offset = 5,   .TPS546 = true,                                                           .power_consumption_target = 40, },
     { .board_version = "302",  .family = FAMILY_LV08,        .EMC2302 = true, .TMP1075 = true,                                            .temp_offset = 5,   .TPS546_LV08 = true,                                                      .power_consumption_target = 140,},
-    { .board_version = "405",  .family = FAMILY_BG02,        .EMC2302 = true, .TMP1075 = true,                                            .temp_offset = 5,   .TPS546_LV08 = true,                                                      .power_consumption_target = 170,},
+    { 
+        .board_version = "405",  
+        .family = FAMILY_BG02,
+        .EMC2302 = true,
+        .TMP1075 = true,
+        .temp_offset = 5,
+        .TPS546 = true,
+        .power_consumption_target = 170,
+    },
     
 };
 
