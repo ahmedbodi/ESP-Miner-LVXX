@@ -43,6 +43,7 @@ typedef enum
     LV06,
     LV07,
     LV08,
+    BG02,
 } Family;
 
 typedef struct {
@@ -110,6 +111,17 @@ static const FamilyConfig FAMILY_GAMMA_TURBO = { .id = GAMMA_TURBO, .name = "Gam
 static const FamilyConfig FAMILY_LV06        = { .id = LV06,        .name = "LV06",       .asic = ASIC_BM1366, .asic_count = 1, .max_power = 40, .power_offset = 12, .nominal_voltage = 12, .voltage_domains = 1, .swarm_color = "orange", };
 static const FamilyConfig FAMILY_LV07        = { .id = LV07,        .name = "LV07",       .asic = ASIC_BM1366, .asic_count = 2, .max_power = 40, .power_offset = 12, .nominal_voltage = 12, .voltage_domains = 1, .swarm_color = "orange", };
 static const FamilyConfig FAMILY_LV08        = { .id = LV08,        .name = "LV08",       .asic = ASIC_BM1366, .asic_count = 9, .max_power = 140,.power_offset = 12, .nominal_voltage = 12, .voltage_domains = 1, .swarm_color = "orange", };
+static const FamilyConfig FAMILY_BG02 = {
+    .id = BG02,
+    .name = "BG02",
+    .asic = ASIC_BM1368,
+    .asic_count = 9,
+    .max_power = 170,
+    .power_offset = 12,
+    .nominal_voltage = 12,
+    .voltage_domains = 1,
+    .swarm_color = "orange",
+};
 
 static const FamilyConfig default_families[] = {
     FAMILY_MAX,
@@ -121,6 +133,7 @@ static const FamilyConfig default_families[] = {
     FAMILY_LV06,
     FAMILY_LV07,
     FAMILY_LV08,
+    FAMILY_BG02,
 };
 
 static const DeviceConfig default_configs[] = {
@@ -146,6 +159,8 @@ static const DeviceConfig default_configs[] = {
     { .board_version = "301_", .family = FAMILY_LV06,        .EMC2302 = true, .TMP1075 = true,                                            .temp_offset = 5,   .TPS546 = true,                                                           .power_consumption_target = 40, },
     { .board_version = "301",  .family = FAMILY_LV07,        .EMC2302 = true, .TMP1075 = true,                                            .temp_offset = 5,   .TPS546 = true,                                                           .power_consumption_target = 40, },
     { .board_version = "302",  .family = FAMILY_LV08,        .EMC2302 = true, .TMP1075 = true,                                            .temp_offset = 5,   .TPS546_LV08 = true,                                                      .power_consumption_target = 140,},
+    { .board_version = "405",  .family = FAMILY_BG02,        .EMC2302 = true, .TMP1075 = true,                                            .temp_offset = 5,   .TPS546_LV08 = true,                                                      .power_consumption_target = 170,},
+    
 };
 
 esp_err_t device_config_init(void * pvParameters);

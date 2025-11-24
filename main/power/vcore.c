@@ -96,7 +96,11 @@ static TPS546_CONFIG TPS546_CONFIG_LV08 = {
 
 esp_err_t VCORE_init(GlobalState * GLOBAL_STATE)
 {
-    ESP_RETURN_ON_FALSE(GLOBAL_STATE->DEVICE_CONFIG.family.voltage_domains != 0, ESP_FAIL, TAG, "voltage_domains not defined");
+    ESP_LOGI(TAG, "Initializing VCORE...");
+    ESP_LOGI(TAG, "Family %s Voltage Domains: %u", GLOBAL_STATE->DEVICE_CONFIG.family.name, GLOBAL_STATE->DEVICE_CONFIG.family.voltage_domains);
+
+    ESP_RETURN_ON_FALSE(GLOBAL_STATE->DEVICE_CONFIG.family.voltage_domains != 0, ESP_FAIL, TAG,
+                        "voltage_domains not defined");
 
     if (GLOBAL_STATE->DEVICE_CONFIG.DS4432U) {
         ESP_RETURN_ON_ERROR(DS4432U_init(), TAG, "DS4432 init failed!");

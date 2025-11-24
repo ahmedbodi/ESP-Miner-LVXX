@@ -12,6 +12,7 @@
 #include "serial.h"
 #include "stratum_task.h"
 #include "i2c_bitaxe.h"
+#include "spi_bitaxe.h"
 #include "adc.h"
 #include "nvs_config.h"
 #include "self_test.h"
@@ -40,6 +41,10 @@ void app_main(void)
     // Init I2C
     ESP_ERROR_CHECK(i2c_bitaxe_init());
     ESP_LOGI(TAG, "I2C initialized successfully");
+
+    // Init SPI
+    ESP_ERROR_CHECK(spi_bitaxe_init());
+    ESP_LOGI(TAG, "SPI initialized successfully");
     
     // Initialize RST pin to low early to minimize ASIC power consumption
     ESP_ERROR_CHECK(asic_hold_reset_low());
@@ -52,11 +57,13 @@ void app_main(void)
     ADC_init();
 
     //initialize the ESP32 NVS
+    ESP_LOGI(TAG, "Initializing NVS...");
     if (nvs_config_init() != ESP_OK){
         ESP_LOGE(TAG, "Failed to init NVS");
         return;
     }
 
+    ESP_LOGI(TAG, "Setting up Device Config");
     if (device_config_init(&GLOBAL_STATE) != ESP_OK) {
         ESP_LOGE(TAG, "Failed to init device config");
         return;
