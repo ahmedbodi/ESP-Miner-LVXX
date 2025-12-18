@@ -2,26 +2,27 @@
 #include "esp_log.h"
 #include "esp_psram.h"
 
+#include "adc.h"
+#include "asic.h"
+#include "asic_init.h"
+#include "asic_reset.h"
 #include "asic_result_task.h"
 #include "asic_task.h"
+#include "bap/bap.h"
+#include "connect.h"
 #include "create_jobs_task.h"
+#include "device_config.h"
+#include "driver/gpio.h"
 #include "hashrate_monitor_task.h"
-#include "statistics_task.h"
-#include "system.h"
 #include "http_server.h"
-#include "serial.h"
-#include "stratum_task.h"
 #include "i2c_bitaxe.h"
-#include "spi_bitaxe.h"
-#include "adc.h"
 #include "nvs_config.h"
 #include "self_test.h"
-#include "asic.h"
-#include "bap/bap.h"
-#include "device_config.h"
-#include "connect.h"
-#include "asic_reset.h"
-#include "asic_init.h"
+#include "serial.h"
+#include "spi_bitaxe.h"
+#include "statistics_task.h"
+#include "stratum_task.h"
+#include "system.h"
 
 static GlobalState GLOBAL_STATE;
 
@@ -71,16 +72,20 @@ void app_main(void)
 
     if (self_test(&GLOBAL_STATE)) return;
 
+    ESP_LOGI(TAG, "Initializing System...");
     SYSTEM_init_system(&GLOBAL_STATE);
 
     // init AP and connect to wifi
+    ESP_LOGI(TAG, "Initializing WiFi...");
     wifi_init(&GLOBAL_STATE);
 
+    ESP_LOGI(TAG, "Initializing Peripherals...");
     if (SYSTEM_init_peripherals(&GLOBAL_STATE) != ESP_OK) {
         ESP_LOGE(TAG, "Failed to init peripherals");
         return;
     }
 
+    ESP_LOGI(TAG, "Creating Tasks...");
     if (xTaskCreate(POWER_MANAGEMENT_task, "power management", 8192, (void *) &GLOBAL_STATE, 10, NULL) != pdPASS) {
         ESP_LOGE(TAG, "Error creating power management task");
     }

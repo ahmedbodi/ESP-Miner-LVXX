@@ -3,6 +3,9 @@
 
 #include "driver/spi_master.h"
 
+#define SPI_BUS_SPEED_HZ 400000 /*!< SPI master clock frequency */
+
+
 esp_err_t spi_bitaxe_init(void);
 esp_err_t spi_bitaxe_add_device(spi_device_handle_t * dev_handle, const char * device_tag);
 

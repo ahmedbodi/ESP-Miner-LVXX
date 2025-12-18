@@ -58,6 +58,7 @@ static bool isFactoryTest = false;
 static void tests_done(GlobalState * GLOBAL_STATE, bool test_result);
 
 static bool should_test() {
+    return true;
     bool is_factory_flash = nvs_config_get_u64(NVS_CONFIG_BEST_DIFF) < 1;
     bool is_self_test_flag_set = nvs_config_get_bool(NVS_CONFIG_SELF_TEST);
     if (is_factory_flash && is_self_test_flag_set) {

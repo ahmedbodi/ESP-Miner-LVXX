@@ -22,24 +22,24 @@ typedef struct
 static spi_dev_entry_t dev_map[MAX_DEVICES];
 static int dev_count = 0;
 #define BUFFER_SZ (320 * 30)
+#define SPI2_MOSI 11
+#define SPI2_SCLK 12
+#define SPI3_MOSI 35
+#define SPI3_SCLK 36
 
 /* -------------------------------------------------- */
 /* SPI INITIALIZATION                                 */
 /* -------------------------------------------------- */
 esp_err_t spi_bitaxe_init(void)
 {
-    spi_bus_config_t cfg = {
-        .mosi_io_num = CONFIG_GPIO_SPI_MOSI,
-        .miso_io_num = -1,
-        .sclk_io_num = CONFIG_GPIO_SPI_SCLK,
-        .quadwp_io_num = -1,
-        .quadhd_io_num = -1,
-        .data4_io_num = -1,
-        .data5_io_num = -1,
-        .data6_io_num = -1,
-        .data7_io_num = -1,
-        .max_transfer_sz = BUFFER_SZ * sizeof(uint16_t) + 8
-    };
+    spi_bus_config_t cfg = {.mosi_io_num = SPI2_MOSI, // 11
+                            .miso_io_num = -1,
+                            .sclk_io_num = SPI2_SCLK, // 9
+                            .quadwp_io_num = -1,
+                            .quadhd_io_num = -1,
+                            .max_transfer_sz = 4096,
+                            .flags = SPICOMMON_BUSFLAG_GPIO_PINS
+                        };
 
     ESP_RETURN_ON_ERROR(spi_bus_initialize(SPI_HOST, &cfg, SPI_DMA_CH_AUTO), TAG, "SPI bus init failed");
     return ESP_OK;
