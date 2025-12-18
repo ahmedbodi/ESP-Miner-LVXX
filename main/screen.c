@@ -80,6 +80,7 @@ static float current_hashrate;
 static float current_power;
 static uint64_t current_difficulty;
 static float current_chip_temp;
+static const char * TAG = "screen";
 
 #define NOTIFICATION_SHARE_ACCEPTED (1 << 0)
 #define NOTIFICATION_SHARE_REJECTED (1 << 1)
@@ -387,9 +388,11 @@ static void screen_update_cb(lv_timer_t * timer)
     int32_t display_timeout_config = nvs_config_get_i32(NVS_CONFIG_DISPLAY_TIMEOUT);
 
     if (0 > display_timeout_config) {
+        ESP_LOGI(TAG, "Display always on");
         // display always on
         display_on(true);
     } else if (0 == display_timeout_config) {
+        ESP_LOGI(TAG, "Display always oFF");
         // display off
         display_on(false);
     } else {
@@ -404,6 +407,8 @@ static void screen_update_cb(lv_timer_t * timer)
     }
 
     if (GLOBAL_STATE->SELF_TEST_MODULE.is_active) {
+        ESP_LOGI(TAG, "Showing self-test screen");
+
         SelfTestModule * self_test = &GLOBAL_STATE->SELF_TEST_MODULE;
         
         lv_label_set_text(self_test_message_label, self_test->message);
@@ -419,6 +424,8 @@ static void screen_update_cb(lv_timer_t * timer)
     }
 
     if (GLOBAL_STATE->SYSTEM_MODULE.is_firmware_update) {
+        ESP_LOGI(TAG, "Showing firmware update screen");
+
         if (strcmp(GLOBAL_STATE->SYSTEM_MODULE.firmware_update_filename, lv_label_get_text(firmware_update_scr_filename_label)) != 0) {
             lv_label_set_text(firmware_update_scr_filename_label, GLOBAL_STATE->SYSTEM_MODULE.firmware_update_filename);
         }
@@ -432,6 +439,8 @@ static void screen_update_cb(lv_timer_t * timer)
     SystemModule * module = &GLOBAL_STATE->SYSTEM_MODULE;
 
     if (module->asic_status) {
+        ESP_LOGI(TAG, "Showing ASIC status screen");
+
         lv_label_set_text(asic_status_label, module->asic_status);
 
         screen_show(SCR_ASIC_STATUS);
@@ -439,6 +448,7 @@ static void screen_update_cb(lv_timer_t * timer)
     }
 
     if (module->overheat_mode) {
+        ESP_LOGI(TAG, "Showing overheat screen");
         if (strcmp(module->ip_addr_str, lv_label_get_text(overheat_ip_addr_label)) != 0) {
             lv_label_set_text(overheat_ip_addr_label, module->ip_addr_str);
         }
@@ -448,6 +458,7 @@ static void screen_update_cb(lv_timer_t * timer)
     }
 
     if (module->ssid[0] == '\0') {
+        ESP_LOGI(TAG, "Showing welcome screen");
         screen_show(SCR_WELCOME);
         return;
     }
@@ -458,6 +469,7 @@ static void screen_update_cb(lv_timer_t * timer)
             lv_label_set_text(connection_wifi_status_label, module->wifi_status);
         }
 
+        ESP_LOGI(TAG, "Showing connection screen");
         screen_show(SCR_CONNECTION);
 
         delays_ms[SCR_CONNECTION] = 0; // Remove delay so whenever the user disables the AP with long press, it goes straight back to carousel
@@ -589,6 +601,7 @@ static void screen_update_cb(lv_timer_t * timer)
         return;
     }
 
+    ESP_LOGI(TAG, "Switching to next screen");
     screen_next();
 }
 
@@ -636,7 +649,9 @@ static void uptime_update_cb(lv_timer_t * timer)
 
 esp_err_t screen_start(void * pvParameters)
 {
+    ESP_LOGI(TAG, "Starting screen");
     if (lvgl_port_lock(0)) {
+        ESP_LOGI(TAG, "Initializing screens");
         // screen_chars = lv_display_get_horizontal_resolution(NULL) / 6;
         screen_lines = lv_display_get_vertical_resolution(NULL) / 8;
 
@@ -668,7 +683,9 @@ esp_err_t screen_start(void * pvParameters)
             // Create uptime update timer (runs every 1 second)
             lv_timer_create(uptime_update_cb, 1000, NULL);
         }
+        ESP_LOGI(TAG, "Screens initialized");
         lvgl_port_unlock();
+        ESP_LOGI(TAG, "Screen started");
     }
 
     return ESP_OK;

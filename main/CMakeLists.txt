@@ -2,6 +2,7 @@ idf_component_register(
 SRCS
     "adc.c"
     "i2c_bitaxe.c"
+    "spi_bitaxe.c"
     "main.c"
     "nvs_config.c"
     "display.c"
@@ -73,6 +74,8 @@ PRIV_REQUIRES
     "spiffs"
     "vfs"
     "esp_driver_i2c"
+    "esp_driver_spi"
+    "esp_lcd"
 
 EMBED_FILES "http_server/recovery_page.html"
 )

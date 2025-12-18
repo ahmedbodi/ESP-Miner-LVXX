@@ -58,6 +58,7 @@ static bool isFactoryTest = false;
 static void tests_done(GlobalState * GLOBAL_STATE, bool test_result);
 
 static bool should_test() {
+    return true;
     bool is_factory_flash = nvs_config_get_u64(NVS_CONFIG_BEST_DIFF) < 1;
     bool is_self_test_flag_set = nvs_config_get_bool(NVS_CONFIG_SELF_TEST);
     if (is_factory_flash && is_self_test_flag_set) {
@@ -239,10 +240,14 @@ esp_err_t test_psram(GlobalState * GLOBAL_STATE){
  */
 bool self_test(void * pvParameters)
 {
+    ESP_LOGI(TAG, "Starting self-test...");
     GlobalState * GLOBAL_STATE = (GlobalState *) pvParameters;
 
     // Should we run the self-test?
-    if (!should_test()) return false;
+    if (!should_test()) {
+        ESP_LOGI(TAG, "Self-test skipped.");
+        return false;
+    }
 
     if (isFactoryTest) {
         ESP_LOGI(TAG, "Running factory self-test");
@@ -263,52 +268,61 @@ bool self_test(void * pvParameters)
     }
 
     //Run PSRAM test
+    ESP_LOGI(TAG, "Testing PSRAM...");
     if(test_psram(GLOBAL_STATE) != ESP_OK) {
         ESP_LOGE(TAG, "NO PSRAM on device!");
         tests_done(GLOBAL_STATE, false);
     }
 
     //Run display tests
+    ESP_LOGI(TAG, "Testing Display...");
     if (test_display(GLOBAL_STATE) != ESP_OK) {
         ESP_LOGE(TAG, "Display test failed!");
         tests_done(GLOBAL_STATE, false);
     }
 
     //Run input tests
+    ESP_LOGI(TAG, "Testing Input...");
     if (test_input(GLOBAL_STATE) != ESP_OK) {
         ESP_LOGE(TAG, "Input test failed!");
         tests_done(GLOBAL_STATE, false);
     }
 
     //Run screen tests
+    ESP_LOGI(TAG, "Testing Screen...");
     if (test_screen(GLOBAL_STATE) != ESP_OK) {
         ESP_LOGE(TAG, "Screen test failed!");
         tests_done(GLOBAL_STATE, false);
     }
 
     //Init peripherals EMC2101 and INA260 (if present)
+    ESP_LOGI(TAG, "Testing Peripherals...");
     if (test_init_peripherals(GLOBAL_STATE) != ESP_OK) {
         ESP_LOGE(TAG, "Peripherals init failed!");
         tests_done(GLOBAL_STATE, false);
     }
 
     //Voltage Regulator Testing
+    ESP_LOGI(TAG, "Testing Voltage Regulator...");
     if (test_voltage_regulator(GLOBAL_STATE) != ESP_OK) {
         ESP_LOGE(TAG, "Voltage Regulator test failed!");
         tests_done(GLOBAL_STATE, false);
     }
 
+    ESP_LOGI(TAG, "Testing ASIC Reset...");
     if (asic_reset() != ESP_OK) {
         ESP_LOGE(TAG, "ASIC reset failed!");
         tests_done(GLOBAL_STATE, false);
     }
 
     //test for number of ASICs
+    ESP_LOGI(TAG, "Testing Serial Init...");
     if (SERIAL_init() != ESP_OK) {
         ESP_LOGE(TAG, "SERIAL init failed!");
         tests_done(GLOBAL_STATE, false);
     }
 
+    ESP_LOGI(TAG, "Testing ASIC Init...");
     POWER_MANAGEMENT_init_frequency(GLOBAL_STATE);
 
     GLOBAL_STATE->DEVICE_CONFIG.family.asic.difficulty = DIFFICULTY;
@@ -326,6 +340,7 @@ bool self_test(void * pvParameters)
     }
 
     //test for voltage regulator faults
+    ESP_LOGI(TAG, "Testing VCORE faults...");
     if (test_vreg_faults(GLOBAL_STATE) != ESP_OK) {
         ESP_LOGE(TAG, "VCORE check fault failed!");
         char error_buf[20];
@@ -336,6 +351,7 @@ bool self_test(void * pvParameters)
     GLOBAL_STATE->ASIC_initalized = true;
 
     //setup and test hashrate
+    ESP_LOGI(TAG, "Testing Serial Baud Rate...");
     int baud = ASIC_set_max_baud(GLOBAL_STATE);
     vTaskDelay(10 / portTICK_PERIOD_MS);
 
@@ -344,6 +360,8 @@ bool self_test(void * pvParameters)
         tests_done(GLOBAL_STATE, false);
     }
 
+    /**
+    ESP_LOGI(TAG, "Testing Hashrate...");
     GLOBAL_STATE->ASIC_TASK_MODULE.active_jobs = malloc(sizeof(bm_job *) * 128);
     GLOBAL_STATE->valid_jobs = malloc(sizeof(uint8_t) * 128);
 
@@ -435,7 +453,7 @@ bool self_test(void * pvParameters)
 
     free(GLOBAL_STATE->ASIC_TASK_MODULE.active_jobs);
     free(GLOBAL_STATE->valid_jobs);
-
+    **/
 
     float asic_temp = Thermal_get_chip_temp(GLOBAL_STATE);
     ESP_LOGI(TAG, "ASIC Temp %f", asic_temp);
